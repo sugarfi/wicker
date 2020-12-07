@@ -1,5 +1,5 @@
 use crate::eval;
-use crate::session::{local::LocalSession, web::WebSession, SessionType};
+use crate::session::SessionType;
 
 pub fn prompt(ctx: &eval::Context) -> String {
     return format!(

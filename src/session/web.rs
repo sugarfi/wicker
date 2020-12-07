@@ -1,6 +1,5 @@
 use crate::eval;
 use crate::session::{DeleteError, ReadError, Session, SessionType, WriteError};
-use std::fs;
 use url::Url;
 use ureq;
 
