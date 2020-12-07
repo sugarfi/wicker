@@ -7,6 +7,7 @@ pub enum ReadError {
     NoPermission,
     DoesNotExist,
     IOError,
+    URLError,
 }
 
 pub enum WriteError {

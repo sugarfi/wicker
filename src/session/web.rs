@@ -1,4 +1,5 @@
 use crate::eval;
+use crate::error::error;
 use crate::session::{DeleteError, ReadError, Session, SessionType, WriteError};
 use url::Url;
 use ureq;
@@ -12,7 +13,13 @@ impl Session for WebSession {
     fn read(&self, path: String, ctx: &mut eval::Context) -> Result<String, ReadError> {
         let res = ureq::get(
             Url::join(
-                &Url::parse(&self.url).unwrap(),
+                match &Url::parse(&self.url) {
+                    Ok(x) => x,
+                    Err(e) => {
+                        error(format!("{}", e));
+                        return Err(ReadError::URLError);
+                    }
+                },
                 &path
             ).unwrap().as_str()
         ).call();
