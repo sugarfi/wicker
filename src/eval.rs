@@ -35,10 +35,14 @@ impl Context {
                 let mut fargs = Vec::new();
                 let mut flags = HashSet::new();
                 let mut fvals = HashMap::new();
+                // every argument
+                let mut all: Vec<Value> = Vec::new();
 
                 for i in args.iter() {
                     match i {
                         Node::Flag(x) => {
+                            all.push(Value::Str(x.to_string()));
+
                             if x.contains('=') {
                                 let mut s = x.split('=');
                                 let a = s.next().unwrap();
@@ -50,12 +54,13 @@ impl Context {
                         }
 
                         _ => {
+                            all.push(self.eval(i).1);
                             fargs.push(self.eval(i).1);
                         }
                     }
                 }
 
-                if let Some((status, res)) = commands::call(c, &fargs, &flags, &fvals, self) {
+                if let Some((status, res)) = commands::call(c, &all, &fargs, &flags, &fvals, self) {
                     self.status = status;
                     return (status, res);
                 } else {

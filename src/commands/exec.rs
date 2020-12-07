@@ -12,8 +12,6 @@ use dyn_clone;
 pub fn exec(
     c: &String,
     args: &Vec<Value>,
-    flags: &HashSet<String>,
-    vals: &HashMap<String, String>,
     ctx: &mut eval::Context,
 ) -> Option<(usize, Value)> {
     let args: Vec<String> = args.iter().map(|v| match v {

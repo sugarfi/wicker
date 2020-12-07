@@ -11,6 +11,7 @@ mod exec;
 
 pub fn call(
     c: &String,
+    all: &Vec<Value>,
     args: &Vec<Value>,
     flags: &HashSet<String>,
     vals: &HashMap<String, String>,
@@ -30,7 +31,7 @@ pub fn call(
             std::process::exit(0);
         }
         _ => {
-            exec::exec(c, args, flags, vals, ctx)
+            exec::exec(c, all, ctx)
         }
     }
 }
