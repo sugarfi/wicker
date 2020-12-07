@@ -32,6 +32,11 @@ fn main() {
     loop {
         match rl.readline(&prompt::prompt(&ctx)) {
             Ok(line) => {
+                // the user inserted nothing
+                if line.len() < 1 {
+                    continue;
+                }
+
                 rl.add_history_entry(line.as_str());
                 let ast = parser::parse(line.clone());
                 match ast {

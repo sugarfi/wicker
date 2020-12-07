@@ -21,7 +21,13 @@ pub fn exec(
             Value::Table(_) => format!("!!Table!!"),
             Value::Nil => "Nil".to_string(),
         }))
-        .spawn();
+        .status();
 
-    Ok(Some((0, Value::Nil)))
+    match cmd {
+        Ok(x) => Ok(Some((match x.code() {
+            Some(i) => i as usize,
+            None => 0usize,
+        }, Value::Nil))),
+        Err(e) => Err(format!("Failed to execute \"{}\"", c)),
+    }
 }
