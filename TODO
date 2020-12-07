@@ -1,0 +1,4 @@
+- `read`: Read from stdin if no file is given
+- Implement `write` for local sessions with std::fs; web sessions will need to leverage an existence check with GET then use PUT or UPDATE accordingly (i think UPDATE is a thing)
+- `session-list`
+- Find a good way to incorporate a `list` command so that it works for both local and web sessions - fuzzing? html parsing + extract links/a/scripts et al?
