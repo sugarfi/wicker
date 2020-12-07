@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use crate::error::error;
 use crate::eval;
 use crate::types::Value;
@@ -29,6 +30,4 @@ pub fn call(
             return Some((1, Value::Nil));
         }
     }
-
-    None
 }

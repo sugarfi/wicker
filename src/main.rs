@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
 mod commands;
