@@ -83,6 +83,11 @@ Argument:
                                         error(format!("cannot read {}: I/O error", x));
                                         return Some((1, Value::Nil));
                                     }
+
+                                    session::ReadError::URLError => {
+                                        error(format!("cannot read {}: URL error", x));
+                                        return Some((1, Value::Nil));
+                                    }
                                 } 
                             }
                         }

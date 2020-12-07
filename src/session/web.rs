@@ -1,5 +1,6 @@
 use crate::eval;
-use crate::session::{DeleteError, ReadError, Session, SessionType, WriteError};
+use crate::error::error;
+use crate::session::{DeleteError, ReadError, Session, SessionType, WriteError, ExecError};
 use url::Url;
 use ureq;
 
@@ -12,7 +13,13 @@ impl Session for WebSession {
     fn read(&self, path: String, ctx: &mut eval::Context) -> Result<String, ReadError> {
         let res = ureq::get(
             Url::join(
-                &Url::parse(&self.url).unwrap(),
+                match &Url::parse(&self.url) {
+                    Ok(x) => x,
+                    Err(e) => {
+                        error(format!("{}", e));
+                        return Err(ReadError::URLError);
+                    }
+                },
                 &path
             ).unwrap().as_str()
         ).call();
@@ -38,6 +45,12 @@ impl Session for WebSession {
     }
 
     fn delete(&self, path: String, ctx: &mut eval::Context) -> Result<(), DeleteError> {
+        Ok(())
+    }
+
+    // TODO: implement
+    fn exec(&self, path: String, _args: Vec<String>, _ctx: &mut eval::Context) -> Result<(), ExecError> {
+        error(format!("Command \"{}\" not found", path));
         Ok(())
     }
 

@@ -7,6 +7,7 @@ mod session_create;
 mod session_switch;
 mod read;
 mod validate;
+mod exec;
 
 pub fn call(
     c: &String,
@@ -25,9 +26,11 @@ pub fn call(
         "read" => {
             return read::read(c, args, flags, vals, ctx);
         }
+        "exit" => {
+            std::process::exit(0);
+        }
         _ => {
-            error(format!("Command `{}` does not exist", c));
-            return Some((1, Value::Nil));
+            exec::exec(c, args, flags, vals, ctx)
         }
     }
 }
