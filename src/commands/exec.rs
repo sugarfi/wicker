@@ -3,6 +3,10 @@ use std::process::Command;
 
 use crate::eval;
 use crate::types::Value;
+use crate::session::ExecError;
+use crate::error::error;
+
+use dyn_clone;
 
 /// Execute a binary command with the Command module
 pub fn exec(
@@ -11,23 +15,26 @@ pub fn exec(
     flags: &HashSet<String>,
     vals: &HashMap<String, String>,
     ctx: &mut eval::Context,
-) -> Result<Option<(usize, Value)>, String> {
-    let cmd = Command::new(c)
-        .args(args.iter().map(|v| match v {
+) -> Option<(usize, Value)> {
+    let args: Vec<String> = args.iter().map(|v| match v {
             // hahahaha
             Value::Str(s) => (*s).clone().to_string(),
             Value::Int(i) => format!("{}", i),
             // TODO: actually do this
             Value::Table(_) => format!("!!Table!!"),
-            Value::Nil => "Nil".to_string(),
-        }))
-        .status();
+            Value::Nil => "Nil".to_string()}).collect();
 
-    match cmd {
-        Ok(x) => Ok(Some((match x.code() {
-            Some(i) => i as usize,
-            None => 0usize,
-        }, Value::Nil))),
-        Err(e) => Err(format!("Failed to execute \"{}\"", c)),
+    let session = dyn_clone::clone_box(&*ctx.all_sessions[&ctx.session]);
+
+    match session.exec(c.to_string(), args, ctx) {
+        Ok(o) => Some((0, Value::Nil)),
+        Err(e) => {
+            match e {
+                ExecError::ExecFailure => {
+                    error(format!("error executing {}: execution failed", c));
+                    Some((1, Value::Nil))
+                }
+            }
+        }
     }
 }

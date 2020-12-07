@@ -30,14 +30,7 @@ pub fn call(
             std::process::exit(0);
         }
         _ => {
-            match exec::exec(c, args, flags, vals, ctx) {
-                Ok(x) => x,
-                Err(e) => {
-                    // error(format!("Command `{}` does not exist", c));
-                    error(e);
-                    Some((1, Value::Nil))
-                }
-            }
+            exec::exec(c, args, flags, vals, ctx)
         }
     }
 }
