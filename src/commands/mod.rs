@@ -7,6 +7,7 @@ mod session_create;
 mod session_switch;
 mod read;
 mod validate;
+mod exec;
 
 pub fn call(
     c: &String,
@@ -26,8 +27,14 @@ pub fn call(
             return read::read(c, args, flags, vals, ctx);
         }
         _ => {
-            error(format!("Command `{}` does not exist", c));
-            return Some((1, Value::Nil));
+            match exec::exec(c, args, flags, vals, ctx) {
+                Ok(x) => x,
+                Err(e) => {
+                    // error(format!("Command `{}` does not exist", c));
+                    error(e);
+                    Some((1, Value::Nil))
+                }
+            }
         }
     }
 }
