@@ -26,6 +26,9 @@ pub fn call(
         "read" => {
             return read::read(c, args, flags, vals, ctx);
         }
+        "exit" => {
+            std::process::exit(0);
+        }
         _ => {
             match exec::exec(c, args, flags, vals, ctx) {
                 Ok(x) => x,
