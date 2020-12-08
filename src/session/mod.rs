@@ -36,4 +36,6 @@ pub trait Session: dyn_clone::DynClone {
     fn delete(&self, path: String, ctx: &mut eval::Context) -> Result<(), DeleteError>;
     fn exec(&self, path: String, args: Vec<String>, ctx: &mut eval::Context) -> Result<(), ExecError>;
     fn get_type(&self) -> SessionType;
+    fn get_cwd(&self) -> String;
+    fn set_cwd(&mut self, cwd: String);
 }

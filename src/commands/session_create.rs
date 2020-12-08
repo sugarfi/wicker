@@ -4,6 +4,7 @@ use crate::eval;
 use crate::session::{local::LocalSession, web::WebSession};
 use crate::types::Value;
 use std::collections::{HashMap, HashSet};
+use std::env;
 
 pub fn session_create(
     c: &String,
@@ -74,7 +75,13 @@ Flags:
 
     match &vals[&"-type".to_string()][..] {
         "local" => {
-            ctx.all_sessions.insert(id, Box::new(LocalSession));
+            ctx.all_sessions.insert(id, Box::new(LocalSession {
+                cwd: env::current_dir()
+                    .unwrap()
+                    .into_os_string()
+                    .into_string()
+                    .unwrap(),
+            }));
         }
 
         "web" => {
@@ -88,7 +95,8 @@ Flags:
             ctx.all_sessions.insert(
                 id,
                 Box::new(WebSession {
-                    url: url.to_string(),
+                    cwd: "/".to_string(),
+                    url: url.to_string()
                 }),
             );
         }

@@ -2,12 +2,21 @@ use crate::eval;
 use crate::session::{DeleteError, ReadError, Session, SessionType, WriteError, ExecError};
 use std::fs;
 use std::process::Command;
+use std::path::Path;
 
 #[derive(Clone)]
-pub struct LocalSession;
+pub struct LocalSession {
+    pub cwd: String
+}
 
 impl Session for LocalSession {
     fn read(&self, path: String, ctx: &mut eval::Context) -> Result<String, ReadError> {
+        let path = if Path::new(&path).is_relative() {
+            Path::new(&self.get_cwd()).join(&path).to_str().unwrap().to_string()
+        } else {
+            Path::new(&path).to_str().unwrap().to_string()
+        };
+
         let path = match fs::canonicalize(path) {
             Ok(x) => x,
             Err(_) => {
@@ -49,6 +58,14 @@ impl Session for LocalSession {
 
     fn get_type(&self) -> SessionType {
         SessionType::Local
+    }
+
+    fn get_cwd(&self) -> String {
+        self.cwd.clone()
+    }
+
+    fn set_cwd(&mut self, cwd: String) {
+        self.cwd = cwd;
     }
 }
 

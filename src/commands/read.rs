@@ -27,13 +27,13 @@ pub fn read(
     if flags.contains(&"-help".to_string()) {
         println!(
             r#"
-Usage: read [-help] <file>
+Usage: read [-help] <file>+
 Flags:
     -help
     Optional. Prints this help message.
 Argument:
-    <file>
-    The file to read from. Exact behavior depends on the session:
+    <file>+
+    The file(s) to read from. Exact behavior depends on the session:
     - In a local session, if the path is relative, it will be joined
       with the current directory and read. If it is absolute, it will
       be read.

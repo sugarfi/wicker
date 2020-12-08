@@ -4,7 +4,7 @@ use crate::session::SessionType;
 pub fn prompt(ctx: &eval::Context) -> String {
     return format!(
         "\x1b[35m{} \x1b[34m{}{} \x1b[36msession:[{}]{} \x1b[0m> ",
-        ctx.cwd,
+        ctx.all_sessions[&ctx.session].get_cwd(),
         match ctx.status {
             0 => "\x1b[32m",
             2 => "\x1b[33m",

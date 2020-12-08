@@ -8,7 +8,6 @@ use std::env;
 
 pub struct Context {
     pub status: usize,
-    pub cwd: String,
     pub session: usize,
     pub all_sessions: HashMap<usize, Box<dyn Session>>,
 }
@@ -16,14 +15,15 @@ pub struct Context {
 impl Context {
     pub fn new() -> Self {
         let mut all: HashMap<usize, Box<dyn Session>> = HashMap::new();
-        all.insert(0, Box::new(LocalSession));
-        return Self {
-            status: 0,
+        all.insert(0, Box::new(LocalSession {
             cwd: env::current_dir()
                 .unwrap()
                 .into_os_string()
                 .into_string()
                 .unwrap(),
+        }));
+        return Self {
+            status: 0,
             session: 0,
             all_sessions: all,
         };

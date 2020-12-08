@@ -8,6 +8,7 @@ mod session_switch;
 mod read;
 mod validate;
 mod exec;
+mod cd;
 
 pub fn call(
     c: &String,
@@ -25,6 +26,9 @@ pub fn call(
         }
         "read" => {
             return read::read(c, args, flags, vals, ctx);
+        }
+        "cd" => {
+            return cd::cd(c, args, flags, vals, ctx);
         }
         "exit" => {
             std::process::exit(0);

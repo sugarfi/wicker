@@ -6,30 +6,21 @@ use ureq;
 
 #[derive(Clone)]
 pub struct WebSession {
-    pub url: String,
+    pub cwd: String,
+    pub url: String
 }
 
 impl Session for WebSession {
     fn read(&self, path: String, ctx: &mut eval::Context) -> Result<String, ReadError> {
         let res = ureq::get(
-            Url::join(
-                match &Url::parse(&self.url) {
-                    Ok(x) => x,
-                    Err(e) => {
-                        error(format!("{}", e));
-                        return Err(ReadError::URLError);
-                    }
-                },
-                &path
-            ).unwrap().as_str()
+            Url::parse(
+                Url::parse(&self.url).unwrap()
+                .join(&self.get_cwd()).unwrap()
+                .as_str()
+            ).unwrap()
+            .join(&path).unwrap()
+            .as_str()
         ).call();
-        println!(
-            "{}", 
-            Url::join(
-                &Url::parse(&self.url).unwrap(),
-                &path
-            ).unwrap().as_str()
-        );
 
         match res.status() {
             200 => Ok(res.into_string().unwrap()),
@@ -56,5 +47,17 @@ impl Session for WebSession {
 
     fn get_type(&self) -> SessionType {
         SessionType::Web
+    }
+
+    fn get_cwd(&self) -> String {
+        self.cwd.clone()
+    }
+
+    fn set_cwd(&mut self, cwd: String) {
+        self.cwd = if cwd.ends_with("/") {
+            cwd
+        } else {
+            format!("{}/", cwd)
+        };
     }
 }

@@ -79,7 +79,7 @@ fn main() {
             }
 
             Err(err) => {
-                println!("\x1b[0;31m❌ Error processing command: ❌\x1b[0m\n{}", err);
+                error(err.to_string());
             }
         }
     }
