@@ -16,7 +16,7 @@ pub fn cd(
     vals: &HashMap<String, String>,
     ctx: &mut eval::Context,
 ) -> Option<(usize, Value)> {
-    let mut session = ctx.all_sessions.get_mut(&ctx.session).unwrap();
+    let session = ctx.all_sessions.get_mut(&ctx.session).unwrap();
 
     if !validate::validate_flags(&[Validator::CanHave("-help".to_string())], flags) {
         return Some((1, Value::Nil));

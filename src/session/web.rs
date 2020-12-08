@@ -36,7 +36,7 @@ impl Session for WebSession {
         }
     }
 
-    fn write(&self, path: String, ctx: &mut eval::Context) -> Result<(), WriteError> {
+    fn write(&self, path: String, data: String, ctx: &mut eval::Context) -> Result<(), WriteError> {
         Ok(())
     }
 

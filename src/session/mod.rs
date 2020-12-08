@@ -32,7 +32,7 @@ pub enum SessionType {
 
 pub trait Session: dyn_clone::DynClone {
     fn read(&self, path: String, ctx: &mut eval::Context) -> Result<String, ReadError>;
-    fn write(&self, path: String, ctx: &mut eval::Context) -> Result<(), WriteError>;
+    fn write(&self, path: String, data: String, ctx: &mut eval::Context) -> Result<(), WriteError>;
     fn delete(&self, path: String, ctx: &mut eval::Context) -> Result<(), DeleteError>;
     fn exec(
         &self,

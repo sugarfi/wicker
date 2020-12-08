@@ -65,7 +65,11 @@ fn main() {
                 let (_, res) = ctx.eval(&ast);
                 match res {
                     Value::Str(x) => {
-                        println!("{}", x);
+                        if x.ends_with("\n") {
+                            print!("{}", x);
+                        } else {
+                            println!("{}", x);
+                        }
                     }
 
                     Value::Int(x) => {

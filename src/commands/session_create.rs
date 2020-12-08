@@ -74,7 +74,7 @@ Flags:
         return Some((2, Value::Nil));
     }
 
-    match &vals[&"-type".to_string()][..] {
+    match &vals["-type"][..] {
         "local" => {
             ctx.all_sessions.insert(
                 id,
@@ -89,7 +89,7 @@ Flags:
         }
 
         "web" => {
-            let url = match vals.get(&"-url".to_string()) {
+            let url = match vals.get("-url") {
                 Some(x) => x,
                 None => {
                     error(

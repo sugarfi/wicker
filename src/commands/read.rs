@@ -5,6 +5,7 @@ use crate::session;
 use crate::types::Value;
 use dyn_clone;
 use std::collections::{HashMap, HashSet};
+use std::io::{self, BufRead};
 
 pub fn read(
     c: &String,
@@ -22,13 +23,14 @@ pub fn read(
     if flags.contains(&"-help".to_string()) {
         println!(
             r#"
-Usage: read [-help] <file>+
+Usage: read [-help] <file>*
 Flags:
     -help
     Optional. Prints this help message.
 Argument:
-    <file>+
-    The file(s) to read from. Exact behavior depends on the session:
+    <file>*
+    The file(s) to read from. If no file is given, stdin will be read.
+    Exact behavior depends on the session:
     - In a local session, if the path is relative, it will be joined
       with the current directory and read. If it is absolute, it will
       be read.
@@ -43,14 +45,14 @@ Argument:
         return Some((1, Value::Nil));
     }
 
+    let mut out = String::new();
     match args.len() {
         0 => {
-            error("`read` must have at least 1 argument".to_string());
-            return Some((1, Value::Nil));
+            let stdin = io::stdin();
+            out += &stdin.lock().lines().next().unwrap().unwrap();
         }
 
         _ => {
-            let mut out = String::new();
             for file in args.iter() {
                 match file {
                     Value::Str(x) => match session.read(x.to_string(), ctx) {
@@ -85,8 +87,8 @@ Argument:
                     }
                 }
             }
-
-            return Some((0, Value::Str(out)));
         }
     }
+
+    return Some((0, Value::Str(out)));
 }

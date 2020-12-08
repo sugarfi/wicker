@@ -1,6 +1,7 @@
 use crate::eval;
 use crate::session::{DeleteError, ExecError, ReadError, Session, SessionType, WriteError};
 use std::fs;
+use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 
@@ -43,7 +44,27 @@ impl Session for LocalSession {
         )
     }
 
-    fn write(&self, path: String, ctx: &mut eval::Context) -> Result<(), WriteError> {
+    fn write(&self, path: String, data: String, ctx: &mut eval::Context) -> Result<(), WriteError> {
+        let path = if Path::new(&path).is_relative() {
+            Path::new(&self.get_cwd()).join(&path)
+        } else {
+            Path::new(&path).to_path_buf()
+        };
+
+        let mut file = match fs::File::create(path) {
+            Ok(x) => x,
+            Err(_) => {
+                return Err(WriteError::IOError);
+            }
+        };
+
+        match file.write_all(data.as_bytes()) {
+            Ok(x) => x,
+            Err(_) => {
+                return Err(WriteError::IOError);
+            }
+        }
+
         Ok(())
     }
 
