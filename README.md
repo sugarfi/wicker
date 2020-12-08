@@ -7,6 +7,7 @@ methods:
 - `read`: Reads a file.
 - `write`: Writes a file.
 - `delete`: Deletes a file.
+- `cd`: Changes the active directory for the current session.
 
 Each of these functions has a correspodning command, which runs that function in
 the current active session. There can be an arbitrary amount of sessions, but only
