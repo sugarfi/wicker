@@ -15,13 +15,16 @@ pub struct Context {
 impl Context {
     pub fn new() -> Self {
         let mut all: HashMap<usize, Box<dyn Session>> = HashMap::new();
-        all.insert(0, Box::new(LocalSession {
-            cwd: env::current_dir()
-                .unwrap()
-                .into_os_string()
-                .into_string()
-                .unwrap(),
-        }));
+        all.insert(
+            0,
+            Box::new(LocalSession {
+                cwd: env::current_dir()
+                    .unwrap()
+                    .into_os_string()
+                    .into_string()
+                    .unwrap(),
+            }),
+        );
         return Self {
             status: 0,
             session: 0,

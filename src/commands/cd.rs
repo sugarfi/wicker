@@ -1,13 +1,13 @@
 use crate::commands::validate::{self, Validator};
-use crate::error::{error, warn, hint, success};
+use crate::error::{error, hint, success, warn};
 use crate::eval;
-use crate::types::Value;
 use crate::session;
-use std::collections::{HashMap, HashSet};
-use std::path::{Path, PathBuf};
-use std::fs;
 use crate::session::SessionType;
+use crate::types::Value;
 use dyn_clone;
+use std::collections::{HashMap, HashSet};
+use std::fs;
+use std::path::{Path, PathBuf};
 
 pub fn cd(
     c: &String,
@@ -18,12 +18,7 @@ pub fn cd(
 ) -> Option<(usize, Value)> {
     let mut session = ctx.all_sessions.get_mut(&ctx.session).unwrap();
 
-    if !validate::validate_flags(
-        &[
-            Validator::CanHave("-help".to_string())
-        ], 
-        flags
-    ) {
+    if !validate::validate_flags(&[Validator::CanHave("-help".to_string())], flags) {
         return Some((1, Value::Nil));
     }
 
@@ -42,16 +37,12 @@ Argument:
         return Some((0, Value::Nil));
     }
 
-    if !validate::validate_vals(
-        &[
-        ], 
-        vals
-    ) {
+    if !validate::validate_vals(&[], vals) {
         return Some((1, Value::Nil));
     }
 
     match args.len() {
-        1 => { },
+        1 => {}
         _ => {
             error("`cd` requires at least 1 argument".to_string());
             return Some((1, Value::Nil));
@@ -65,7 +56,6 @@ Argument:
             return Some((1, Value::Nil));
         }
     });
-    
 
     match session.get_type() {
         SessionType::Local => {
@@ -86,7 +76,7 @@ Argument:
                 return Some((1, Value::Nil));
             }
 
-            session.set_cwd(res.to_str().unwrap().to_string()); 
+            session.set_cwd(res.to_str().unwrap().to_string());
         }
 
         SessionType::Web => {

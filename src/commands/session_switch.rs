@@ -1,5 +1,5 @@
 use crate::commands::validate::{self, Validator};
-use crate::error::{error, warn, hint, success};
+use crate::error::{error, hint, success, warn};
 use crate::eval;
 use crate::types::Value;
 use std::collections::{HashMap, HashSet};
@@ -11,12 +11,7 @@ pub fn session_switch(
     vals: &HashMap<String, String>,
     ctx: &mut eval::Context,
 ) -> Option<(usize, Value)> {
-    if !validate::validate_flags(
-        &[
-            Validator::CanHave("-help".to_string())
-        ], 
-        flags
-    ) {
+    if !validate::validate_flags(&[Validator::CanHave("-help".to_string())], flags) {
         return Some((1, Value::Nil));
     }
 
@@ -35,16 +30,12 @@ Arguments:
         return Some((0, Value::Nil));
     }
 
-    if !validate::validate_vals(
-        &[
-        ], 
-        vals
-    ) {
+    if !validate::validate_vals(&[], vals) {
         return Some((1, Value::Nil));
     }
 
     match args.len() {
-        1 => { },
+        1 => {}
         _ => {
             error("`session-switch` must have exactly 1 argument".to_string());
             return Some((1, Value::Nil));

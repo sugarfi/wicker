@@ -3,12 +3,12 @@ use crate::error::error;
 use crate::eval;
 use crate::types::Value;
 use std::collections::{HashMap, HashSet};
+mod cd;
+mod exec;
+mod read;
 mod session_create;
 mod session_switch;
-mod read;
 mod validate;
-mod exec;
-mod cd;
 
 pub fn call(
     c: &String,
@@ -34,8 +34,6 @@ pub fn call(
         "exit" => {
             std::process::exit(0);
         }
-        _ => {
-            exec::exec(c, all, ctx)
-        }
+        _ => exec::exec(c, all, ctx),
     }
 }

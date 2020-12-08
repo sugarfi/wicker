@@ -1,33 +1,38 @@
-use crate::eval;
 use crate::error::error;
-use crate::session::{DeleteError, ReadError, Session, SessionType, WriteError, ExecError};
-use url::Url;
+use crate::eval;
+use crate::session::{DeleteError, ExecError, ReadError, Session, SessionType, WriteError};
 use ureq;
+use url::Url;
 
 #[derive(Clone)]
 pub struct WebSession {
     pub cwd: String,
-    pub url: String
+    pub url: String,
 }
 
 impl Session for WebSession {
     fn read(&self, path: String, ctx: &mut eval::Context) -> Result<String, ReadError> {
         let res = ureq::get(
             Url::parse(
-                Url::parse(&self.url).unwrap()
-                .join(&self.get_cwd()).unwrap()
-                .as_str()
-            ).unwrap()
-            .join(&path).unwrap()
-            .as_str()
-        ).call();
+                Url::parse(&self.url)
+                    .unwrap()
+                    .join(&self.get_cwd())
+                    .unwrap()
+                    .as_str(),
+            )
+            .unwrap()
+            .join(&path)
+            .unwrap()
+            .as_str(),
+        )
+        .call();
 
         match res.status() {
             200 => Ok(res.into_string().unwrap()),
             404 => Err(ReadError::DoesNotExist),
             401 | 403 => Err(ReadError::NoPermission),
 
-            _ => Err(ReadError::IOError)
+            _ => Err(ReadError::IOError),
         }
     }
 
@@ -40,7 +45,12 @@ impl Session for WebSession {
     }
 
     // TODO: implement
-    fn exec(&self, path: String, _args: Vec<String>, _ctx: &mut eval::Context) -> Result<(), ExecError> {
+    fn exec(
+        &self,
+        path: String,
+        _args: Vec<String>,
+        _ctx: &mut eval::Context,
+    ) -> Result<(), ExecError> {
         error(format!("Command \"{}\" not found", path));
         Ok(())
     }

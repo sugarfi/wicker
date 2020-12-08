@@ -15,14 +15,12 @@ use crate::types::Value;
 
 /// Throw a parser error and print it
 macro_rules! parser_error {
-    ( $msg:expr, $line:expr, $pos:expr ) => {
-        {
-            error($msg.to_string());
-            println!("  |\n1 |{}", $line);
-            println!("  |\x1b[33m{}↑ here\x1b[0m", " ".repeat($pos - 1));
-            continue;
-        }
-    };
+    ( $msg:expr, $line:expr, $pos:expr ) => {{
+        error($msg.to_string());
+        println!("  |\n1 |{}", $line);
+        println!("  |\x1b[33m{}↑ here\x1b[0m", " ".repeat($pos - 1));
+        continue;
+    }};
 }
 
 fn main() {
@@ -40,13 +38,27 @@ fn main() {
                 rl.add_history_entry(line.as_str());
                 let ast = parser::parse(line.clone());
                 match ast {
-                    Err(parser::ParserError::BadToken(pos)) => parser_error!("bad token", line, pos),
-                    Err(parser::ParserError::ExpectedWhitespace(pos)) => parser_error!("expected whitespace", line, pos),
-                    Err(parser::ParserError::ExpectedName(pos)) => parser_error!("expected name", line, pos),
-                    Err(parser::ParserError::ExpectedFlag(pos)) => parser_error!("expected flag", line, pos),
-                    Err(parser::ParserError::ExpectedInt(pos)) => parser_error!("expected integer", line, pos),
-                    Err(parser::ParserError::ExpectedStr(pos)) => parser_error!("expected string", line, pos),
-                    Err(parser::ParserError::EOF(pos)) => parser_error!("unexpected EOF", line, pos),
+                    Err(parser::ParserError::BadToken(pos)) => {
+                        parser_error!("bad token", line, pos)
+                    }
+                    Err(parser::ParserError::ExpectedWhitespace(pos)) => {
+                        parser_error!("expected whitespace", line, pos)
+                    }
+                    Err(parser::ParserError::ExpectedName(pos)) => {
+                        parser_error!("expected name", line, pos)
+                    }
+                    Err(parser::ParserError::ExpectedFlag(pos)) => {
+                        parser_error!("expected flag", line, pos)
+                    }
+                    Err(parser::ParserError::ExpectedInt(pos)) => {
+                        parser_error!("expected integer", line, pos)
+                    }
+                    Err(parser::ParserError::ExpectedStr(pos)) => {
+                        parser_error!("expected string", line, pos)
+                    }
+                    Err(parser::ParserError::EOF(pos)) => {
+                        parser_error!("unexpected EOF", line, pos)
+                    }
                     _ => {}
                 };
                 let ast = ast.unwrap();
@@ -60,7 +72,7 @@ fn main() {
                         println!("{}", x);
                     }
 
-                    Value::Nil => { }
+                    Value::Nil => {}
 
                     x => {
                         println!("{:?}", x);

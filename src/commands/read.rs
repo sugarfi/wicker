@@ -1,10 +1,10 @@
 use crate::commands::validate::{self, Validator};
-use crate::error::{error, warn, hint, success};
+use crate::error::{error, hint, success, warn};
 use crate::eval;
-use crate::types::Value;
 use crate::session;
-use std::collections::{HashMap, HashSet};
+use crate::types::Value;
 use dyn_clone;
+use std::collections::{HashMap, HashSet};
 
 pub fn read(
     c: &String,
@@ -15,12 +15,7 @@ pub fn read(
 ) -> Option<(usize, Value)> {
     let session = dyn_clone::clone_box(&*ctx.all_sessions[&ctx.session]);
 
-    if !validate::validate_flags(
-        &[
-            Validator::CanHave("-help".to_string())
-        ], 
-        flags
-    ) {
+    if !validate::validate_flags(&[Validator::CanHave("-help".to_string())], flags) {
         return Some((1, Value::Nil));
     }
 
@@ -44,11 +39,7 @@ Argument:
         return Some((0, Value::Nil));
     }
 
-    if !validate::validate_vals(
-        &[
-        ], 
-        vals
-    ) {
+    if !validate::validate_vals(&[], vals) {
         return Some((1, Value::Nil));
     }
 
@@ -62,36 +53,32 @@ Argument:
             let mut out = String::new();
             for file in args.iter() {
                 match file {
-                    Value::Str(x) => {
-                        match session.read(x.to_string(), ctx) {
-                            Ok(val) => {
-                                out += &val;
-                            }
-                            Err(e) => {
-                                match e {
-                                    session::ReadError::NoPermission => {
-                                        error(format!("cannot read {}: permission denied", x));
-                                        return Some((1, Value::Nil));
-                                    }
-
-                                    session::ReadError::DoesNotExist => {
-                                        error(format!("cannot read {}: file does not exist", x));
-                                        return Some((1, Value::Nil));
-                                    }
-
-                                    session::ReadError::IOError => {
-                                        error(format!("cannot read {}: I/O error", x));
-                                        return Some((1, Value::Nil));
-                                    }
-
-                                    session::ReadError::URLError => {
-                                        error(format!("cannot read {}: URL error", x));
-                                        return Some((1, Value::Nil));
-                                    }
-                                } 
-                            }
+                    Value::Str(x) => match session.read(x.to_string(), ctx) {
+                        Ok(val) => {
+                            out += &val;
                         }
-                    }
+                        Err(e) => match e {
+                            session::ReadError::NoPermission => {
+                                error(format!("cannot read {}: permission denied", x));
+                                return Some((1, Value::Nil));
+                            }
+
+                            session::ReadError::DoesNotExist => {
+                                error(format!("cannot read {}: file does not exist", x));
+                                return Some((1, Value::Nil));
+                            }
+
+                            session::ReadError::IOError => {
+                                error(format!("cannot read {}: I/O error", x));
+                                return Some((1, Value::Nil));
+                            }
+
+                            session::ReadError::URLError => {
+                                error(format!("cannot read {}: URL error", x));
+                                return Some((1, Value::Nil));
+                            }
+                        },
+                    },
                     _ => {
                         error("argument to `read` must be a string".to_string());
                         return Some((1, Value::Nil));

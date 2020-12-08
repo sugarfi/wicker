@@ -1,5 +1,5 @@
 use crate::commands::validate::{self, Validator};
-use crate::error::{error, warn, hint, success};
+use crate::error::{error, hint, success, warn};
 use crate::eval;
 use crate::session::{local::LocalSession, web::WebSession};
 use crate::types::Value;
@@ -16,9 +16,9 @@ pub fn session_create(
     if !validate::validate_flags(
         &[
             Validator::CanHave("-overwrite".to_string()),
-            Validator::CanHave("-help".to_string())
-        ], 
-        flags
+            Validator::CanHave("-help".to_string()),
+        ],
+        flags,
     ) {
         return Some((1, Value::Nil));
     }
@@ -42,7 +42,8 @@ Flags:
 
     -id=<id>
     Optional. Sets the ID of the session to create; if unset, the next consecutive session ID will be used.
-            "#);
+            "#
+        );
         return Some((0, Value::Nil));
     }
 
@@ -50,7 +51,7 @@ Flags:
         &[
             Validator::MustHave("-type".to_string()),
             Validator::CanHave("-url".to_string()),
-            Validator::CanHave("-id".to_string())
+            Validator::CanHave("-id".to_string()),
         ],
         vals,
     ) {
@@ -75,20 +76,26 @@ Flags:
 
     match &vals[&"-type".to_string()][..] {
         "local" => {
-            ctx.all_sessions.insert(id, Box::new(LocalSession {
-                cwd: env::current_dir()
-                    .unwrap()
-                    .into_os_string()
-                    .into_string()
-                    .unwrap(),
-            }));
+            ctx.all_sessions.insert(
+                id,
+                Box::new(LocalSession {
+                    cwd: env::current_dir()
+                        .unwrap()
+                        .into_os_string()
+                        .into_string()
+                        .unwrap(),
+                }),
+            );
         }
 
         "web" => {
             let url = match vals.get(&"-url".to_string()) {
                 Some(x) => x,
                 None => {
-                    error("When session type is `web`, a `-url` argument must be provided.".to_string());
+                    error(
+                        "When session type is `web`, a `-url` argument must be provided."
+                            .to_string(),
+                    );
                     return Some((1, Value::Nil));
                 }
             };
@@ -96,7 +103,7 @@ Flags:
                 id,
                 Box::new(WebSession {
                     cwd: "/".to_string(),
-                    url: url.to_string()
+                    url: url.to_string(),
                 }),
             );
         }
