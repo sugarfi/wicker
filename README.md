@@ -27,9 +27,9 @@ Only a few commands are implemented:
 - `session-create`: Creates a new session.
 - `session-switch`: Switches to a new session.
 - `read`: Uses the current session to read a file.
+- `write`: Uses the current session to write a file.
 
 However, Wicker is still in dev, and ideally soon the following commands will be implemented:
-- `write`: Uses the current session to write a file.
 - `delete`: Uses the current session to delete a file.
 - `session-list`: Lists all existing sessions.
 
