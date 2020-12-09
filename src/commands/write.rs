@@ -39,11 +39,8 @@ Argument:
       with the current directory and written. If it is absolute, it
       will be written without joining.
     - In a web session, the path will be joined with the current
-      directory. Then a GET request is made to check if the file
-      exists. If it does, a PATCH request is sent to update it -
-      otherwise, a PUT request is sent to create it. If either
-      the PUT or PATCH request comes back with a 405 error, the write
-      fails with an I/O error.
+      directory. Then a PUT request will be sent to the server to
+      write the specified path.
             "#
         );
         return Some((0, Value::Nil));

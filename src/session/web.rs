@@ -31,13 +31,31 @@ impl Session for WebSession {
             200 => Ok(res.into_string().unwrap()),
             404 => Err(ReadError::DoesNotExist),
             401 | 403 => Err(ReadError::NoPermission),
-
             _ => Err(ReadError::IOError),
         }
     }
 
     fn write(&self, path: String, data: String, ctx: &mut eval::Context) -> Result<(), WriteError> {
-        Ok(())
+        let res = ureq::put(
+            Url::parse(
+                Url::parse(&self.url)
+                    .unwrap()
+                    .join(&self.get_cwd())
+                    .unwrap()
+                    .as_str(),
+            )
+            .unwrap()
+            .join(&path)
+            .unwrap()
+            .as_str(),
+        )
+        .send_string(&data);
+
+        match res.status() {
+           200 => Ok(()),
+           401 | 403 => Err(WriteError::NoPermission),
+           _ => Err(WriteError::IOError),
+        }
     }
 
     fn delete(&self, path: String, ctx: &mut eval::Context) -> Result<(), DeleteError> {
