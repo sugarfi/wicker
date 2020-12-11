@@ -59,7 +59,27 @@ impl Session for WebSession {
     }
 
     fn delete(&self, path: String, ctx: &mut eval::Context) -> Result<(), DeleteError> {
-        Ok(())
+        let res = ureq::delete(
+            Url::parse(
+                Url::parse(&self.url)
+                    .unwrap()
+                    .join(&self.get_cwd())
+                    .unwrap()
+                    .as_str(),
+            )
+            .unwrap()
+            .join(&path)
+            .unwrap()
+            .as_str(),
+        )
+        .call();
+
+        match res.status() {
+            200 => Ok(()),
+            404 => Err(DeleteError::DoesNotExist),
+            401 | 403 => Err(DeleteError::NoPermission),
+            _ => Err(DeleteError::IOError),
+        }
     }
 
     // TODO: implement

@@ -10,6 +10,7 @@ mod session_create;
 mod session_switch;
 mod validate;
 mod write;
+mod delete;
 
 pub fn call(
     c: &String,
@@ -34,6 +35,9 @@ pub fn call(
         }
         "cd" => {
             return cd::cd(c, args, flags, vals, ctx);
+        }
+        "delete" => {
+            return delete::delete(c, args, flags, vals, ctx);
         }
         "exit" => {
             std::process::exit(0);

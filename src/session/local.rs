@@ -69,6 +69,39 @@ impl Session for LocalSession {
     }
 
     fn delete(&self, path: String, ctx: &mut eval::Context) -> Result<(), DeleteError> {
+        let path = if Path::new(&path).is_relative() {
+            Path::new(&self.get_cwd())
+                .join(&path)
+                .to_str()
+                .unwrap()
+                .to_string()
+        } else {
+            Path::new(&path).to_str().unwrap().to_string()
+        };
+
+        let path = match fs::canonicalize(path) {
+            Ok(x) => x,
+            Err(_) => {
+                return Err(DeleteError::DoesNotExist);
+            }
+        };
+
+        if Path::new(&path).is_dir() {
+            match fs::remove_dir(path) {
+                Ok(_) => { },
+                Err(_) => {
+                    return Err(DeleteError::IOError);
+                }
+            }
+        } else {
+            match fs::remove_file(path) {
+                Ok(_) => { },
+                Err(_) => {
+                    return Err(DeleteError::IOError);
+                }
+            }
+        }
+
         Ok(())
     }
 
