@@ -9,7 +9,13 @@ mod parser;
 mod prompt;
 mod session;
 mod types;
-use crate::error::error;
+mod stringify;
+mod config;
+use serde_yaml;
+use std::fs;
+use std::path::Path;
+use std::env;
+use crate::error::{error, warn};
 use crate::eval::Context;
 use crate::types::Value;
 
@@ -27,8 +33,22 @@ fn main() {
     let mut rl = Editor::<()>::new();
     let mut ctx = Context::new();
 
+    let config_file = match fs::read_to_string(Path::new(&env::home_dir().unwrap_or(env::current_dir().unwrap())).join(".wicker.yml")) {
+        Err(_) => {
+            warn("could not find config file, using the default".to_string());
+            config::Config {
+                prompt: config::Prompt {
+                    format: "> ".to_string()
+                }
+            }
+        }
+        Ok(x) => {
+            serde_yaml::from_str::<config::Config>(&x).unwrap()
+        }
+    };
+
     loop {
-        match rl.readline(&prompt::prompt(&ctx)) {
+        match rl.readline(&prompt::prompt(&ctx, &config_file)) {
             Ok(line) => {
                 // the user inserted nothing
                 if line.len() < 1 {
@@ -63,25 +83,7 @@ fn main() {
                 };
                 let ast = ast.unwrap();
                 let (_, res) = ctx.eval(&ast);
-                match res {
-                    Value::Str(x) => {
-                        if x.ends_with("\n") {
-                            print!("{}", x);
-                        } else {
-                            println!("{}", x);
-                        }
-                    }
-
-                    Value::Int(x) => {
-                        println!("{}", x);
-                    }
-
-                    Value::Nil => {}
-
-                    x => {
-                        println!("{:?}", x);
-                    }
-                }
+                stringify::output(&res);
             }
 
             Err(ReadlineError::Eof) => {

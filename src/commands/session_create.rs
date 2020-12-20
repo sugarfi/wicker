@@ -66,7 +66,7 @@ Flags:
                 return Some((1, Value::Nil));
             }
         },
-        None => ctx.all_sessions.keys().fold(0, |a, &b| a.min(b)) + 1,
+        None => ctx.all_sessions.keys().fold(0, |a, &b| a.max(b)) + 1,
     };
 
     if ctx.all_sessions.contains_key(&id) && !flags.contains(&"-overwrite".to_string()) {

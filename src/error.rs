@@ -31,3 +31,11 @@ pub fn success(msg: String) {
         println!("\x1b[32m✔️ {} ✔️\x1b[0m", msg);
     }
 }
+
+pub fn bold(msg: String) -> String {
+    if env::var("NO_COLOR").unwrap_or(String::new()).len() > 0 {
+        msg
+    } else {
+        format!("\x1b[1m{}\x1b[0m", msg)
+    }
+}

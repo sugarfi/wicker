@@ -8,6 +8,7 @@ mod exec;
 mod read;
 mod session_create;
 mod session_switch;
+mod session_list;
 mod validate;
 mod write;
 mod delete;
@@ -26,6 +27,9 @@ pub fn call(
         }
         "session-switch" => {
             return session_switch::session_switch(c, args, flags, vals, ctx);
+        }
+        "session-list" => {
+            return session_list::session_list(c, args, flags, vals, ctx);
         }
         "write" => {
             return write::write(c, args, flags, vals, ctx);

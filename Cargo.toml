@@ -11,3 +11,5 @@ rustyline = "6.3.0"
 dyn-clone = "1.0.3"
 url = "2.2.0"
 ureq = "1.5.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
