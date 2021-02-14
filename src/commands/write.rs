@@ -27,7 +27,7 @@ Flags:
     -help
     Optional. Prints this help message.
     
-    -to=<id>
+    -to=<file>
     Optional. If set, data will be written to this file, instead of
     stdout.
 Argument:

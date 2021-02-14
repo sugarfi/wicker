@@ -4,6 +4,7 @@ use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
+use shellexpand;
 
 #[derive(Clone)]
 pub struct LocalSession {
@@ -12,6 +13,7 @@ pub struct LocalSession {
 
 impl Session for LocalSession {
     fn read(&self, path: String, ctx: &mut eval::Context) -> Result<String, ReadError> {
+        let path = shellexpand::tilde(&path).into_owned();
         let path = if Path::new(&path).is_relative() {
             Path::new(&self.get_cwd())
                 .join(&path)
